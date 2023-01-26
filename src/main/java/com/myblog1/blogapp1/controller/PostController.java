@@ -6,8 +6,11 @@ import com.myblog1.blogapp1.service.PostService;
 import com.myblog1.blogapp1.utils.AppConstants;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -18,8 +21,14 @@ public class PostController {
     public PostController(PostService postService) {
         this.postService = postService;
     }
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
-    public ResponseEntity<PostDto> createPost(@RequestBody PostDto postDto){
+    public ResponseEntity<Object> createPost(@Valid @RequestBody PostDto postDto, BindingResult bindingResult){
+
+        if(bindingResult.hasErrors()){
+
+           return new ResponseEntity<>(bindingResult.getFieldError().getDefaultMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
         return new ResponseEntity<>(postService.createPost(postDto), HttpStatus.CREATED);
     }
     /*@GetMapping
