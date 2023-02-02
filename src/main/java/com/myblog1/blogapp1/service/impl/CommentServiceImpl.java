@@ -29,7 +29,8 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public CommentDto createComment(long postId,CommentDto commentDto) {
 
-        Post post = postRepo.findById(postId).orElseThrow( ()-> new ResourceNotFoundException("post","id",postId));
+        Post post = postRepo.findById(postId)
+                .orElseThrow( ()-> new ResourceNotFoundException("post","id",postId));
 
         Comment comment = mapToComment(commentDto);
         comment.setPost(post);
